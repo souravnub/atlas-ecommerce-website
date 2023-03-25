@@ -11,7 +11,12 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                body: "Noto Sans, sans-serif",
+                body: "Montserrat, sans-serif",
+            },
+            colors: {
+                gray: {
+                    150: "#f0f0f0",
+                },
             },
         },
     },
