@@ -13,6 +13,10 @@ module.exports = {
             fontFamily: {
                 body: "Montserrat, sans-serif",
             },
+            backgroundImage: {
+                "gradient-radial":
+                    "radial-gradient(var(--gradient-color-stops))",
+            },
             colors: {
                 gray: {
                     150: "#f0f0f0",
