@@ -1,6 +1,7 @@
 import React from "react";
 import { atom, useAtom } from "jotai";
 import CustomCarousel from "./Carousel";
+import CarouselIndicators from "@/components/common/carousel/CarouselIndicators";
 
 const plans = [
     {
@@ -45,20 +46,13 @@ const GoPremiumAdvertisement = () => {
                     <CustomCarousel data={plans} setIdx={setIdx} idx={idx} />
                 </div>
 
-                <div className="w-full justify-center mt-3 flex gap-2">
-                    {plans.map((plan, planIdx) => {
-                        return (
-                            <button
-                                key={planIdx}
-                                onClick={() => setIdx(planIdx)}
-                                className={`w-1.5 h-1.5 bg-blue-400 rounded-full transition-opacity duration-500 ${
-                                    planIdx === idx
-                                        ? "opacity-100"
-                                        : "opacity-30"
-                                }`}></button>
-                        );
-                    })}
-                </div>
+                <CarouselIndicators
+                    count={plans.length}
+                    activeIndex={idx}
+                    btnClassNames="p-[3.5px] rounded-full transition-opacity duration-300 bg-blue-400"
+                    activeClassNames="opacity-100"
+                    className="w-full justify-center mt-3 flex gap-2"
+                    setIndex={setIdx}></CarouselIndicators>
             </div>
         </>
     );

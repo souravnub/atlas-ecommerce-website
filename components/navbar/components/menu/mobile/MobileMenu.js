@@ -72,7 +72,7 @@ const MobileMenu = () => {
             />
             <aside
                 ref={menuRef}
-                className="translate-y-full bg-white isolate fixed inset-0 top-10 rounded-t-2xl rounded-l-md pt-10 pb-5 overflow-auto px-3 z-20 md:hidden">
+                className="translate-y-full bg-white isolate fixed inset-0 top-10 rounded-t-2xl rounded-l-md pt-10 pb-5 overflow-auto px-3 z-50 md:hidden">
                 <button
                     className="absolute flex items-center justify-center top-3 right-2 z-10 p-0.5 aspect-square rounded-full text-black text-2xl"
                     onClick={() => setMobileMenuOpenState(false)}>

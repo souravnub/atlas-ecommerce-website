@@ -13,7 +13,7 @@ const Navbar = () => {
 
     return (
         <nav
-            className="flex justify-between items-center py-2 px-3 fixed top-0 w-full bg-white bg-opacity-80 backdrop-blur-lg z-10"
+            className="flex justify-between items-center py-2 px-3 fixed inset-0 bottom-auto mx-auto container bg-white  z-10"
             ref={navRef}>
             <Logo />
             <MobileMenu />
