@@ -1,19 +1,17 @@
 import CarouselIndicators from "@/components/common/carousel/CarouselIndicators";
-import { atom, useAtom } from "jotai";
 import Link from "next/link";
 import { Carousel } from "react-responsive-carousel";
 import { HiArrowRight } from "react-icons/hi";
 import CarouselNavigationButtons from "@/components/common/carousel/CarouselNavigationButtons";
-
-const activeIndexAtom = atom(0);
+import { useCarousel } from "@/components/common/carousel/hooks/useCarousel";
 
 export default function HomePageCarousel() {
-    const [activeIndex, setIndex] = useAtom(activeIndexAtom);
+    const [activeIndex, setIndex] = useCarousel();
     return (
         <div className="relative">
             <Carousel
                 selectedItem={activeIndex}
-                onChange={(idx) => setIndex(idx)}
+                onChange={setIndex}
                 showIndicators={false}
                 showThumbs={false}
                 showArrows={false}

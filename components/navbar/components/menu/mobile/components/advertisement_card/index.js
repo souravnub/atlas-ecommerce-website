@@ -2,6 +2,7 @@ import React from "react";
 import { atom, useAtom } from "jotai";
 import CustomCarousel from "./Carousel";
 import CarouselIndicators from "@/components/common/carousel/CarouselIndicators";
+import { useCarousel } from "@/components/common/carousel/hooks/useCarousel";
 
 const plans = [
     {
@@ -28,10 +29,8 @@ const plans = [
     },
 ];
 
-const idxAtom = atom(0);
-
 const GoPremiumAdvertisement = () => {
-    const [idx, setIdx] = useAtom(idxAtom);
+    const [idx, setIdx] = useCarousel();
 
     return (
         <>
