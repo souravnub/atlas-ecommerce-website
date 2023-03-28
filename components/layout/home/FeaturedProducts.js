@@ -14,7 +14,7 @@ import { atom, useAtom } from "jotai";
 import { CiShoppingCart } from "react-icons/ci";
 
 const breakpoints = {
-    450: 1,
+    550: 1,
     1000: 2,
     1200: 3,
     1600: 4,
@@ -97,7 +97,7 @@ const FeaturedProducts = () => {
     }, [childrenPerSlide]);
 
     return (
-        <div className="mt-24 mb-24">
+        <div className="mt-24">
             <div className="flex justify-between">
                 <h1 className="font-semibold text-2xl mb-8">
                     Featured products
