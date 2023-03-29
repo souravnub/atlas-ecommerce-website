@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import Actions from "./components/user_actions/Actions";
-import Logo from "./components/Logo";
 import Menu from "./components/menu/desktop/Menu";
 import MobileMenu from "./components/menu/mobile/MobileMenu";
+import Logo from "../common/Logo";
 
 const Navbar = () => {
     const navRef = useRef();

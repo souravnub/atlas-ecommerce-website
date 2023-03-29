@@ -43,23 +43,23 @@ const NewsLetter = () => {
                 newsletter
             </p>
             <form
-                className="text-sm py-5 flex justify-center lg:text-base lg:py-8"
+                className="py-5 flex justify-center lg:text-base lg:py-8"
                 onSubmit={handleSubscribeNewsLetter}>
                 <div className="relative">
                     <input
                         type="email"
                         required
-                        className="px-2.5 pl-8 lg:pl-9 focus:outline-none lg:min-w-[18rem]  lg:py-2 placeholder:text-xs lg:placeholder:text-sm font-medium py-1.5 min-w-[15rem] border-[1.7px] rounded-md bg-slate-50"
+                        className="px-2.5 pl-9 focus:outline-none lg:min-w-[18rem] py-2 lg:placeholder:text-sm font-medium  min-w-[15rem] border-[1.7px] rounded-md bg-slate-50"
                         placeholder="Enter your email"
                         aria-placeholder="enter your email"
                         aria-required="true"
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <div ref={iconRef} className="group ">
-                        <IoMail className="group-data-[valid=empty]:fill-neutral-400 absolute group-data-[valid=true]:fill-green-600 group-data-[valid=false]:fill-red-600 top-1/2 -translate-y-1/2 left-2.5 text-lg transition-colors duration-300 lg:text-xl" />
+                    <div ref={iconRef} className="group">
+                        <IoMail className="group-data-[valid=empty]:fill-neutral-700 absolute group-data-[valid=true]:fill-green-600 group-data-[valid=false]:fill-red-600 top-1/2 -translate-y-1/2 left-2.5 text-2xl transition-colors duration-300 " />
                     </div>
                 </div>
-                <button className="ml-1 bg-gray-800 rounded-md text-white text-xs px-4 lg:text-sm lg:px-5">
+                <button className="ml-1 bg-gray-800 rounded-md text-white text-sm px-4  lg:px-5">
                     Subscribe
                 </button>
             </form>

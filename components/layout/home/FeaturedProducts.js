@@ -45,7 +45,7 @@ const products = [
 
 const ProductCard = ({ img, name, isOnSale, price, discounted_price }) => {
     return (
-        <div className="flex-1 flex max-w-[20rem] flex-col">
+        <div className="flex-1 flex flex-col">
             <div className="flex-1  aspect-square">
                 <ProductCardImg isOnSale={isOnSale} img={img} />
             </div>
