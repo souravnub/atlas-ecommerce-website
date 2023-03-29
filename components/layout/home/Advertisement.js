@@ -5,7 +5,7 @@ import { HiOutlineArrowRight } from "react-icons/hi";
 
 const Advertisement = () => {
     return (
-        <div className="mt-24 mb-24 w-full grid grid-rows-5 md:grid-rows-none md:grid-cols-5 rounded-xl overflow-hidden">
+        <div className="mt-24 w-full grid grid-rows-5 md:grid-rows-none md:grid-cols-5 rounded-xl overflow-hidden">
             <div className="relative row-start-1 row-span-2  md:col-start-1 md:col-end-3">
                 <Image
                     src="https://images.unsplash.com/flagged/photo-1570733117311-d990c3816c47?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fGZhc2hpb258ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60"

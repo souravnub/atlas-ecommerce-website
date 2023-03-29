@@ -1,6 +1,7 @@
 import Advertisement from "@/components/layout/home/Advertisement";
 import FeaturedProducts from "@/components/layout/home/FeaturedProducts";
 import HomePageCarousel from "@/components/layout/home/HomePageCarousel";
+import NewsLetter from "@/components/layout/home/NewsLetter";
 import PartnerBrands from "@/components/layout/home/partnerBrands";
 import ProductCategoriesSection from "@/components/layout/home/ProductCategoriesSection";
 import Services from "@/components/layout/home/Services";
@@ -15,6 +16,7 @@ const Home = () => {
             <ProductCategoriesSection />
             <FeaturedProducts />
             <Advertisement />
+            <NewsLetter />
         </div>
     );
 };
