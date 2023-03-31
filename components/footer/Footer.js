@@ -45,16 +45,15 @@ const Footer = () => {
                 <div className="flex justify-between w-full flex-wrap gap-5">
                     {lists.map(({ title, links }) => {
                         return (
-                            <div>
+                            <div key={title}>
                                 <span className="font-semibold uppercase mb-4 inline-block">
                                     {title}
                                 </span>
-                                <ul
-                                    key={title}
-                                    className="text-gray-500 text-sm flex-col flex gap-2 font-medium">
+                                <ul className="text-gray-500 text-sm flex-col flex gap-2 font-medium">
                                     {links.map(({ name, href }) => {
                                         return (
                                             <Link
+                                                key={name}
                                                 href={href}
                                                 className="capitalize">
                                                 {name}
@@ -74,18 +73,21 @@ const Footer = () => {
                                     <Image
                                         src="/visa_icon.png"
                                         width={35}
+                                        alt="visa card image"
                                         height={35}
                                     />
                                 </li>
                                 <li>
                                     <Image
                                         src="/mastercard_icon.png"
+                                        alt="master card image"
                                         width={35}
                                         height={35}
                                     />
                                 </li>
                                 <li>
                                     <Image
+                                        alt="paytm card image"
                                         src="/paytm_icon.png"
                                         width={35}
                                         height={35}
