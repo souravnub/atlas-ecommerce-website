@@ -10,6 +10,9 @@ module.exports = {
     ],
     theme: {
         extend: {
+            borderWidth: {
+                DEFAULT: "1.5px",
+            },
             fontFamily: {
                 body: "Montserrat, sans-serif",
             },

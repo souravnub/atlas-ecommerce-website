@@ -9,13 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "formik": "^2.2.9",
     "gsap": "^3.11.5",
     "jotai": "^2.0.3",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
-    "react-responsive-carousel": "^3.2.23"
+    "react-responsive-carousel": "^3.2.23",
+    "react-select": "^5.7.2",
+    "yup": "^1.1.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
