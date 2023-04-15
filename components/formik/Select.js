@@ -4,19 +4,27 @@ import { HiOutlineChevronDown } from "react-icons/hi";
 import { HiDocumentMagnifyingGlass } from "react-icons/hi2";
 import { Field } from "formik";
 import ErrorText from "./ErrorText";
+import Label from "./Label";
 
-const FormikSelect = ({ name, placeholder, options, label, ...rest }) => {
+const FormikSelect = ({
+    name,
+    required,
+    placeholder,
+    options,
+    label,
+    ...rest
+}) => {
     const selectRef = useRef();
 
     return (
         <div>
             {label && (
-                <label
-                    className="relative block w-max font-medium text-sm mb-1"
-                    htmlFor={name}
-                    onClick={() => selectRef.current.focus()}>
-                    {label}
-                </label>
+                <Label
+                    parentId={name}
+                    label={label}
+                    required={required}
+                    onClick={() => selectRef.current.focus()}
+                />
             )}
 
             <Field name={name} id={name}>
@@ -44,7 +52,7 @@ const FormikSelect = ({ name, placeholder, options, label, ...rest }) => {
                             placeholder={placeholder}
                             aria-label={placeholder}
                             classNames={{
-                                control: () => "border rounded-md p-3",
+                                control: () => "border rounded-md py-2 px-3",
                                 option: ({ isFocused, isSelected }) =>
                                     `pl-2 py-2  active:bg-gray-200 ${
                                         isFocused && "bg-gray-50"
