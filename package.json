@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@atlaskit/spinner": "^15.4.0",
     "formik": "^2.2.9",
     "gsap": "^3.11.5",
     "jotai": "^2.0.3",

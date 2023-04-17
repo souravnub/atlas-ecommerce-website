@@ -2,6 +2,7 @@ import React, { forwardRef, useRef } from "react";
 import Select from "react-select";
 import { HiOutlineChevronDown } from "react-icons/hi";
 import { HiDocumentMagnifyingGlass } from "react-icons/hi2";
+import Spinner from "@atlaskit/spinner";
 import { Field } from "formik";
 import ErrorText from "./ErrorText";
 import Label from "./Label";
@@ -26,7 +27,6 @@ const FormikSelect = forwardRef(
 
                 <Field name={name}>
                     {({ field, form }) => {
-                        console.log(form.values);
                         return (
                             <Select
                                 ref={ref}
@@ -37,8 +37,11 @@ const FormikSelect = forwardRef(
                                 isSearchable
                                 unstyled
                                 components={{
+                                    LoadingIndicator: () => (
+                                        <Spinner size={14} />
+                                    ),
                                     DropdownIndicator: () => (
-                                        <HiOutlineChevronDown className="text-xl box-content" />
+                                        <HiOutlineChevronDown className="text-xl box-content text-gray-600" />
                                     ),
                                     NoOptionsMessage: () => (
                                         <div className="flex items-center gap-1 justify-center py-2">
@@ -48,12 +51,19 @@ const FormikSelect = forwardRef(
                                             </span>
                                         </div>
                                     ),
+                                    IndicatorsContainer: ({ children }) => (
+                                        <div className="flex items-center gap-1.5">
+                                            {children}
+                                        </div>
+                                    ),
                                 }}
                                 placeholder={placeholder}
                                 aria-label={placeholder}
                                 classNames={{
-                                    control: () =>
-                                        "border rounded-md py-2 px-3",
+                                    control: ({ isDisabled }) =>
+                                        `border rounded-md py-2 px-3 ${
+                                            isDisabled && "opacity-50"
+                                        }`,
                                     option: ({ isFocused, isSelected }) =>
                                         `pl-2 py-2  active:bg-gray-200 ${
                                             isFocused && "bg-gray-50"
