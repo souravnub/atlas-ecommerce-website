@@ -1,7 +1,7 @@
 import Steps from "@/components/Steps";
 import FormControl from "@/components/formik/FormControl";
 import FormikContainer from "@/components/formik/FormikContainer";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { object, string } from "yup";
 import { useAtom, useSetAtom } from "jotai";
 import {
@@ -39,7 +39,7 @@ const INITIAL_CHECKOUT_FORM_VALUES = {
     address: {
         street: "",
         city: "",
-        region: "",
+        state: "",
         postalCode: "",
     },
 
@@ -62,8 +62,8 @@ const validationSchema = object({
     }),
     address: object({
         street: string().required("Street & house number is required"),
-        state: string().required("State is required"),
-        city: string().required("City is required"),
+        // state: string().required("State is required"),
+        // city: string().required("City is required"),
         postalCode: string().required("Postal code is required"),
     }),
     shipping: object({
@@ -78,19 +78,43 @@ const validationSchema = object({
 const Checkout = () => {
     const stateSelectRef = useRef();
     const citySelectRef = useRef();
-    const setSelectedCountryIso2 = useSetAtom(selectedCountryIso2Atom);
+    const [selectedCountryIos2, setSelectedCountryIso2] = useAtom(
+        selectedCountryIso2Atom
+    );
     const [selectedState, setSelectedState] = useAtom(selectedStateAtom);
 
     const [countries] = useAtom(countriesAtom);
     const [states] = useAtom(lodableStateAtom);
     const [cities] = useAtom(loadableCitiesAtom);
 
+    const validationSchemaWithState = useMemo(() => {
+        if (states.data && states.data.length > 0) {
+            return validationSchema.shape({
+                address: object({
+                    state: object().required("State is required"),
+                }),
+            });
+        }
+        return validationSchema;
+    }, [states.data]);
+
+    const finalValidationSchema = useMemo(() => {
+        if (cities.data && cities.data.length > 0) {
+            return validationSchema.shape({
+                address: object({
+                    city: string().required("City is required"),
+                }),
+            });
+        }
+        return validationSchemaWithState;
+    }, [cities.data, validationSchemaWithState]);
+
     return (
         <div className="mt-10">
             <Steps steps={steps} activeStepIdx={1} />
 
             <FormikContainer
-                validationSchema={validationSchema}
+                validationSchema={finalValidationSchema}
                 className="mt-8 p-5 border rounded-lg border-gray-200"
                 formId="checkout-form"
                 initialValues={INITIAL_CHECKOUT_FORM_VALUES}
@@ -174,6 +198,7 @@ const Checkout = () => {
                         required
                         id="state"
                         options={states.data || []}
+                        isDisabled={selectedCountryIos2 ? false : true}
                         controlType="select"
                         label="State"
                         placeholder="State"
@@ -195,6 +220,7 @@ const Checkout = () => {
                         name="address.city"
                         required
                         id="city"
+                        isDisabled={selectedState ? false : true}
                         options={cities.data || []}
                         controlType="select"
                         label="City"
