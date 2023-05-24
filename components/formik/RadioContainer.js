@@ -20,7 +20,11 @@ const RadioButton = ({ name, label, value }) => {
 const RadioContainer = ({ title, options, ...rest }) => {
     return (
         <fieldset>
-            {title && <legend className="font-medium mb-4">{title}</legend>}
+            {title && (
+                <legend className="font-semibold text-gray-700 block mb-4">
+                    {title}
+                </legend>
+            )}
 
             <div className="space-y-3">
                 {options.map((option) => {

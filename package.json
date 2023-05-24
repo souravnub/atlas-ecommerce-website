@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@atlaskit/spinner": "^15.4.0",
+    "axios": "^1.4.0",
     "formik": "^2.2.9",
     "gsap": "^3.11.5",
     "jotai": "^2.0.3",
@@ -18,6 +19,7 @@
     "react-datepicker": "^4.11.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
+    "react-query": "^3.39.3",
     "react-responsive-carousel": "^3.2.23",
     "react-select": "^5.7.2",
     "yup": "^1.1.1"

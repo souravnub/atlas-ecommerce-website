@@ -1,22 +1,24 @@
-export default async function (countryIso) {
-    const res = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/states",
+import axios from "axios";
+import { useQuery } from "react-query";
+
+export default ({ countryIso, enabled }) => {
+    return useQuery(
+        [countryIso, "states"],
+        async () => {
+            const res = await axios.post(
+                "https://countriesnow.space/api/v0.1/countries/states",
+                {
+                    iso2: countryIso,
+                }
+            );
+            console.log(res);
+            return res.data.data.states.map(({ name }) => ({
+                label: name,
+                value: { country: res.data.data.name, state: name },
+            }));
+        },
         {
-            method: "POST",
-            body: JSON.stringify({
-                iso2: countryIso,
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            },
+            enabled,
         }
     );
-    const jsonRes = await res.json();
-
-    const formattedStates = jsonRes.data.states.map(({ name }) => ({
-        label: name,
-        value: { country: jsonRes.data.name, state: name },
-    }));
-
-    return formattedStates;
-}
+};

@@ -3,14 +3,15 @@ import FormControl from "@/components/formik/FormControl";
 import FormikContainer from "@/components/formik/FormikContainer";
 import React, { useMemo, useRef } from "react";
 import { object, string } from "yup";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import {
-    countriesAtom,
-    loadableCitiesAtom,
-    lodableStateAtom,
     selectedCountryIso2Atom,
     selectedStateAtom,
 } from "@/stores/checkoutPageStore";
+import RadioLabel from "@/components/layout/checkout/RadioLabel";
+import fetchCities from "@/utils/checkout page/fetchCities";
+import fetchCountries from "@/utils/checkout page/fetchCountries";
+import fetchStates from "@/utils/checkout page/fetchStates";
 
 const steps = [
     {
@@ -75,6 +76,8 @@ const validationSchema = object({
     }),
 });
 
+// Todos : handle errors in select components
+
 const Checkout = () => {
     const stateSelectRef = useRef();
     const citySelectRef = useRef();
@@ -83,12 +86,20 @@ const Checkout = () => {
     );
     const [selectedState, setSelectedState] = useAtom(selectedStateAtom);
 
-    const [countries] = useAtom(countriesAtom);
-    const [states] = useAtom(lodableStateAtom);
-    const [cities] = useAtom(loadableCitiesAtom);
+    const { data: countries, isLoading: isCountriesLoading } = fetchCountries();
+
+    const { data: states, isLoading: isStatesLoading } = fetchStates({
+        countryIso: selectedCountryIos2,
+        enabled: !!selectedCountryIos2,
+    });
+
+    const { data: cities, isLoading: isCitiesLoading } = fetchCities({
+        enabled: !!selectedState,
+        selectedStateProps: selectedState,
+    });
 
     const validationSchemaWithState = useMemo(() => {
-        if (states.data && states.data.length > 0) {
+        if (states && states.length > 0) {
             return validationSchema.shape({
                 address: object({
                     state: object().required("State is required"),
@@ -96,10 +107,10 @@ const Checkout = () => {
             });
         }
         return validationSchema;
-    }, [states.data]);
+    }, [states]);
 
     const finalValidationSchema = useMemo(() => {
-        if (cities.data && cities.data.length > 0) {
+        if (cities && cities.length > 0) {
             return validationSchema.shape({
                 address: object({
                     city: string().required("City is required"),
@@ -107,7 +118,7 @@ const Checkout = () => {
             });
         }
         return validationSchemaWithState;
-    }, [cities.data, validationSchemaWithState]);
+    }, [cities, validationSchemaWithState]);
 
     return (
         <div className="mt-10">
@@ -115,121 +126,178 @@ const Checkout = () => {
 
             <FormikContainer
                 validationSchema={finalValidationSchema}
-                className="mt-8 p-5 border rounded-lg border-gray-200"
                 formId="checkout-form"
+                className="mt-5"
                 initialValues={INITIAL_CHECKOUT_FORM_VALUES}
                 onSubmit={(values) => console.log(values)}>
-                <div>
-                    <span className="font-semibold text-gray-700 mb-4 block">
-                        Select shipping country
-                    </span>
+                <div className="p-5 border rounded-lg border-gray-200">
+                    <div>
+                        <span className="font-semibold text-gray-700 mb-4 block">
+                            Select shipping country
+                        </span>
+                        <FormControl
+                            required
+                            form="checkout-form"
+                            placeholder="Select a country..."
+                            name="shipping.country"
+                            controlType="select"
+                            options={countries || []}
+                            isLoading={isCountriesLoading}
+                            onChange={({ value: countryIso }) => {
+                                setSelectedCountryIso2(countryIso);
+                                stateSelectRef.current.clearValue();
+                            }}
+                        />
+                    </div>
+                    <hr className="my-6" />
+
+                    <div className="space-y-4">
+                        <span className="font-semibold text-gray-700 mb-4 block">
+                            Shipping address
+                        </span>
+                        <FormControl
+                            required
+                            id="name"
+                            controlType="text"
+                            name="name"
+                            label="Full name"
+                            placeholder="Enter your full name"
+                        />
+                        <div className="flex  gap-3 flex-col md:flex-row">
+                            <FormControl
+                                name="contact.email"
+                                required
+                                id="email"
+                                controlType="text"
+                                type="email"
+                                label="Email address"
+                                placeholder="Enter your email address"
+                                containerClass="flex-1"
+                            />
+
+                            <FormControl
+                                name="contact.confirmationEmail"
+                                required
+                                id="email"
+                                controlType="text"
+                                type="email"
+                                label="Confirmation email"
+                                placeholder="Enter your confirmation email"
+                                containerClass="flex-1"
+                            />
+                        </div>
+                        <FormControl
+                            name="contact.phone"
+                            required
+                            id="phone"
+                            controlType="text"
+                            label="Phone number"
+                            placeholder="Enter your phone number (only digits)"
+                        />
+
+                        <FormControl
+                            name="address.street"
+                            required
+                            id="street"
+                            controlType="text"
+                            label="Street name and house number"
+                            placeholder="Enter your Street name and house number"
+                        />
+
+                        <div className="flex gap-3 flex-col md:flex-row">
+                            <div className="flex-1">
+                                <FormControl
+                                    ref={stateSelectRef}
+                                    name="address.state"
+                                    required
+                                    id="state"
+                                    options={states || []}
+                                    isDisabled={
+                                        selectedCountryIos2 ? false : true
+                                    }
+                                    controlType="select"
+                                    label="State"
+                                    placeholder="State"
+                                    isLoading={isStatesLoading}
+                                    onChange={async (selectedStateObj) => {
+                                        citySelectRef.current.clearValue();
+
+                                        if (!selectedStateObj) return;
+
+                                        const {
+                                            value: { country, state },
+                                        } = selectedStateObj;
+                                        setSelectedState({ country, state });
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex-1">
+                                <FormControl
+                                    ref={citySelectRef}
+                                    name="address.city"
+                                    required
+                                    id="city"
+                                    isDisabled={selectedState ? false : true}
+                                    options={cities || []}
+                                    controlType="select"
+                                    label="City"
+                                    placeholder="City"
+                                    isLoading={isCitiesLoading}
+                                />
+                            </div>
+                        </div>
+
+                        <FormControl
+                            name="address.postalCode"
+                            id="postal_code"
+                            label="Postal code"
+                            required
+                            placeholder="Enter your postal code"
+                            controlType="text"
+                        />
+                    </div>
+                </div>
+
+                <div className="p-5 border rounded-lg border-gray-200">
                     <FormControl
-                        required
-                        form="checkout-form"
-                        placeholder="Select a country..."
-                        name="shipping.country"
-                        controlType="select"
-                        options={countries.data || []}
-                        isLoading={countries.state === "loading"}
-                        onChange={({ value: countryIso }) => {
-                            setSelectedCountryIso2(countryIso);
-                            stateSelectRef.current.clearValue();
-                        }}
+                        controlType="radio"
+                        title="Shipping method"
+                        name="shipping.method"
+                        options={[
+                            {
+                                label: (
+                                    <RadioLabel
+                                        label="Free shipping"
+                                        info="7 - 21 business days"
+                                        price="$0"
+                                    />
+                                ),
+                                value: "free",
+                            },
+                            {
+                                label: (
+                                    <RadioLabel
+                                        label="Regular shipping"
+                                        info="3 - 7 business days"
+                                        price="$10.5"
+                                    />
+                                ),
+                                value: "regular",
+                            },
+                            {
+                                label: (
+                                    <RadioLabel
+                                        label="Express shipping"
+                                        info="1 - 3 business days"
+                                        price="$22.5"
+                                    />
+                                ),
+                                value: "express",
+                            },
+                        ]}
                     />
                 </div>
-                <hr className="my-6" />
-
-                <span className="font-semibold text-gray-700 mb-4 block">
-                    Shipping address
-                </span>
-                <FormControl
-                    required
-                    id="name"
-                    controlType="text"
-                    name="name"
-                    label="Full name"
-                    placeholder="Enter your full name"
-                />
-                <div className="flex  gap-2">
-                    <FormControl
-                        name="contact.email"
-                        required
-                        id="email"
-                        controlType="text"
-                        type="email"
-                        label="Email address"
-                        placeholder="Enter your email address"
-                        containerClass="flex-1"
-                    />
-
-                    <FormControl
-                        name="contact.confirmationEmail"
-                        required
-                        id="email"
-                        controlType="text"
-                        type="email"
-                        label="Confirmation email"
-                        placeholder="Enter your confirmation email"
-                        containerClass="flex-1"
-                    />
-                </div>
-                <FormControl
-                    name="contact.phone"
-                    required
-                    id="phone"
-                    controlType="text"
-                    label="Phone number"
-                    placeholder="Enter your phone number (only digits)"
-                />
-
-                <FormControl
-                    name="address.street"
-                    required
-                    id="street"
-                    controlType="text"
-                    label="Street name and house number"
-                    placeholder="Enter your Street name and house number"
-                />
-
-                <div>
-                    <FormControl
-                        ref={stateSelectRef}
-                        name="address.state"
-                        required
-                        id="state"
-                        options={states.data || []}
-                        isDisabled={selectedCountryIos2 ? false : true}
-                        controlType="select"
-                        label="State"
-                        placeholder="State"
-                        isLoading={states.state === "loading"}
-                        onChange={async (selectedStateObj) => {
-                            citySelectRef.current.clearValue();
-
-                            if (!selectedStateObj) return;
-
-                            const {
-                                value: { country, state },
-                            } = selectedStateObj;
-                            setSelectedState({ country, state });
-                        }}
-                    />
-
-                    <FormControl
-                        ref={citySelectRef}
-                        name="address.city"
-                        required
-                        id="city"
-                        isDisabled={selectedState ? false : true}
-                        options={cities.data || []}
-                        controlType="select"
-                        label="City"
-                        placeholder="City"
-                        isLoading={cities.state === "loading"}
-                    />
-                </div>
-
-                <button type="submit">submit</button>
             </FormikContainer>
         </div>
     );

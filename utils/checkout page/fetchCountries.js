@@ -1,13 +1,14 @@
-export default async function fetchCountries() {
-    const res = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/iso"
-    );
-    const jsonRes = await res.json();
+import axios from "axios";
+import { useQuery } from "react-query";
 
-    const formatted_countries = jsonRes.data?.map(({ name, Iso2 }) => ({
-        label: name,
-        value: Iso2,
-    }));
-
-    return formatted_countries;
-}
+export default () => {
+    return useQuery(["countries"], async () => {
+        const res = await axios.get(
+            "https://countriesnow.space/api/v0.1/countries/iso"
+        );
+        return res.data.data?.map(({ name, Iso2 }) => ({
+            label: name,
+            value: Iso2,
+        }));
+    });
+};
