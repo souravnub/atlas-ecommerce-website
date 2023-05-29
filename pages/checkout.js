@@ -2,7 +2,7 @@ import Steps from "@/components/Steps";
 import FormControl from "@/components/formik/FormControl";
 import FormikContainer from "@/components/formik/FormikContainer";
 import React, { useMemo, useRef } from "react";
-import { object, string } from "yup";
+import { object, string, ref as yup_ref } from "yup";
 import { useAtom } from "jotai";
 import {
     selectedCountryIso2Atom,
@@ -12,6 +12,8 @@ import RadioLabel from "@/components/layout/checkout/RadioLabel";
 import fetchCities from "@/utils/checkout page/fetchCities";
 import fetchCountries from "@/utils/checkout page/fetchCountries";
 import fetchStates from "@/utils/checkout page/fetchStates";
+import { useCart } from "@/components/cart/hooks/useCart";
+import Product from "@/components/layout/checkout/Product";
 
 const steps = [
     {
@@ -55,10 +57,14 @@ const INITIAL_CHECKOUT_FORM_VALUES = {
 const validationSchema = object({
     name: string().required("Full name is required"),
     contact: object({
-        email: string().email("Invalid email").required("Email is required"),
+        email: string()
+            .email("Invalid email")
+            .required("Email is required")
+            .oneOf([yup_ref("confirmationEmail")], "Emails don't match"),
         confirmationEmail: string()
             .email("Invalid email")
-            .required("Confirmation Email is required"),
+            .required("Confirmation Email is required")
+            .oneOf([yup_ref("email")], "Emails don't match"),
         phone: string().required("Phone number is required"),
     }),
     address: object({
@@ -85,15 +91,31 @@ const Checkout = () => {
         selectedCountryIso2Atom
     );
     const [selectedState, setSelectedState] = useAtom(selectedStateAtom);
+    const { cart } = useCart();
 
-    const { data: countries, isLoading: isCountriesLoading } = fetchCountries();
+    const {
+        data: countries,
+        isLoading: isCountriesLoading,
+        isError: isCountriesError,
+        error: countriesError,
+    } = fetchCountries();
 
-    const { data: states, isLoading: isStatesLoading } = fetchStates({
+    const {
+        data: states,
+        isLoading: isStatesLoading,
+        error: statesError,
+        isError: isStatesError,
+    } = fetchStates({
         countryIso: selectedCountryIos2,
         enabled: !!selectedCountryIos2,
     });
 
-    const { data: cities, isLoading: isCitiesLoading } = fetchCities({
+    const {
+        data: cities,
+        isLoading: isCitiesLoading,
+        isError: isCitiesError,
+        error: citiesError,
+    } = fetchCities({
         enabled: !!selectedState,
         selectedStateProps: selectedState,
     });
@@ -130,24 +152,37 @@ const Checkout = () => {
                 className="mt-5"
                 initialValues={INITIAL_CHECKOUT_FORM_VALUES}
                 onSubmit={(values) => console.log(values)}>
+                <button type="submit">submit</button>
                 <div className="p-5 border rounded-lg border-gray-200">
                     <div>
                         <span className="font-semibold text-gray-700 mb-4 block">
-                            Select shipping country
+                            {!isCountriesError
+                                ? "Select shipping country"
+                                : "Shipping country"}
                         </span>
-                        <FormControl
-                            required
-                            form="checkout-form"
-                            placeholder="Select a country..."
-                            name="shipping.country"
-                            controlType="select"
-                            options={countries || []}
-                            isLoading={isCountriesLoading}
-                            onChange={({ value: countryIso }) => {
-                                setSelectedCountryIso2(countryIso);
-                                stateSelectRef.current.clearValue();
-                            }}
-                        />
+
+                        {!isCountriesError ? (
+                            <FormControl
+                                required
+                                form="checkout-form"
+                                placeholder="Select a country..."
+                                name="shipping.country"
+                                controlType="select"
+                                options={countries || []}
+                                isLoading={isCountriesLoading}
+                                onChange={({ value: countryIso }) => {
+                                    setSelectedCountryIso2(countryIso);
+                                    stateSelectRef.current?.clearValue();
+                                }}
+                            />
+                        ) : (
+                            <FormControl
+                                required
+                                controlType="text"
+                                placeholder="Enter Your Country"
+                                name="shipping.country"
+                            />
+                        )}
                     </div>
                     <hr className="my-6" />
 
@@ -206,45 +241,72 @@ const Checkout = () => {
 
                         <div className="flex gap-3 flex-col md:flex-row">
                             <div className="flex-1">
-                                <FormControl
-                                    ref={stateSelectRef}
-                                    name="address.state"
-                                    required
-                                    id="state"
-                                    options={states || []}
-                                    isDisabled={
-                                        selectedCountryIos2 ? false : true
-                                    }
-                                    controlType="select"
-                                    label="State"
-                                    placeholder="State"
-                                    isLoading={isStatesLoading}
-                                    onChange={async (selectedStateObj) => {
-                                        citySelectRef.current.clearValue();
+                                {!countriesError && !isStatesError ? (
+                                    <FormControl
+                                        ref={stateSelectRef}
+                                        name="address.state"
+                                        required
+                                        id="state"
+                                        options={states || []}
+                                        isDisabled={
+                                            selectedCountryIos2 ? false : true
+                                        }
+                                        controlType="select"
+                                        label="State"
+                                        placeholder="State"
+                                        isLoading={isStatesLoading}
+                                        onChange={async (selectedStateObj) => {
+                                            citySelectRef.current?.clearValue();
 
-                                        if (!selectedStateObj) return;
+                                            if (!selectedStateObj) return;
 
-                                        const {
-                                            value: { country, state },
-                                        } = selectedStateObj;
-                                        setSelectedState({ country, state });
-                                    }}
-                                />
+                                            const {
+                                                value: { country, state },
+                                            } = selectedStateObj;
+                                            setSelectedState({
+                                                country,
+                                                state,
+                                            });
+                                        }}
+                                    />
+                                ) : (
+                                    <FormControl
+                                        required
+                                        label="State"
+                                        controlType="text"
+                                        placeholder="Enter Your State"
+                                        name="address.state"
+                                    />
+                                )}
                             </div>
 
                             <div className="flex-1">
-                                <FormControl
-                                    ref={citySelectRef}
-                                    name="address.city"
-                                    required
-                                    id="city"
-                                    isDisabled={selectedState ? false : true}
-                                    options={cities || []}
-                                    controlType="select"
-                                    label="City"
-                                    placeholder="City"
-                                    isLoading={isCitiesLoading}
-                                />
+                                {!countriesError &&
+                                !isStatesError &&
+                                !isCitiesError ? (
+                                    <FormControl
+                                        ref={citySelectRef}
+                                        name="address.city"
+                                        required
+                                        id="city"
+                                        isDisabled={
+                                            selectedState ? false : true
+                                        }
+                                        options={cities || []}
+                                        controlType="select"
+                                        label="City"
+                                        placeholder="City"
+                                        isLoading={isCitiesLoading}
+                                    />
+                                ) : (
+                                    <FormControl
+                                        required
+                                        label="City"
+                                        controlType="text"
+                                        placeholder="Enter Your City"
+                                        name="address.city"
+                                    />
+                                )}
                             </div>
                         </div>
 
@@ -259,7 +321,7 @@ const Checkout = () => {
                     </div>
                 </div>
 
-                <div className="p-5 border rounded-lg border-gray-200">
+                <div className="p-5 mt-5 border rounded-lg border-gray-200">
                     <FormControl
                         controlType="radio"
                         title="Shipping method"
@@ -297,6 +359,12 @@ const Checkout = () => {
                             },
                         ]}
                     />
+                </div>
+
+                <div className="p-5 mt-5 border rounded-lg border-gray-200">
+                    <span className="font-semibold text-gray-700 mb-4 block">
+                        Your Order
+                    </span>
                 </div>
             </FormikContainer>
         </div>

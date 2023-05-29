@@ -19,6 +19,7 @@ export default ({ countryIso, enabled }) => {
         },
         {
             enabled,
+            refetchOnWindowFocus: false,
         }
     );
 };

@@ -15,8 +15,13 @@ const Cart = () => {
         selectMultipleProducts,
         unSelectMultipleProducts,
     ] = useSelect();
-    const [cart, increaseItem, removeItem, decreaseItem, removeMultipleItems] =
-        useCart();
+    const {
+        cart,
+        increaseItem,
+        removeItem,
+        decreaseItem,
+        removeMultipleItems,
+    } = useCart();
 
     function handleCheckButton({ id: productId, toggleAction }) {
         if (toggleAction === true) {

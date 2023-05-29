@@ -16,6 +16,7 @@ export default ({ enabled, selectedStateProps }) => {
         },
         {
             enabled,
+            refetchOnWindowFocus: false,
         }
     );
 };

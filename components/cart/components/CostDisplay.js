@@ -1,16 +1,9 @@
-import {
-    getSubTotalAtom,
-    getTotalCost,
-    getTotalDiscountAtom,
-} from "@/stores/cartStore";
-import { useAtomValue } from "jotai";
 import Link from "next/link";
 import React from "react";
+import { useCart } from "../hooks/useCart";
 
-const CostDisplay = ({ cart }) => {
-    const subTotal = useAtomValue(getSubTotalAtom);
-    const discount = useAtomValue(getTotalDiscountAtom);
-    const totalCost = useAtomValue(getTotalCost);
+const CostDisplay = () => {
+    const { discount, subTotal, totalCost } = useCart();
 
     return (
         <div className="mt-16 h-min  lg:mt-0 lg:col-span-2 border-[1.8px] border-gray-100 p-6 flex flex-col gap-5 rounded-lg">

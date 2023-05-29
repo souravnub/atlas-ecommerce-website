@@ -1,6 +1,9 @@
 import {
     cartAtom,
     decreaseCartItemCountAtom,
+    getSubTotalAtom,
+    getTotalCost,
+    getTotalDiscountAtom,
     increaseCartItemCountAtom,
     removeCartItemAtom,
     removeMultipleCartItemsAtom,
@@ -14,11 +17,20 @@ export function useCart() {
     const decreaseItem = useSetAtom(decreaseCartItemCountAtom);
     const removeMultipleItemsAtom = useSetAtom(removeMultipleCartItemsAtom);
 
-    return [
+    const subTotal = useAtomValue(getSubTotalAtom);
+    const discount = useAtomValue(getTotalDiscountAtom);
+    const totalCost = useAtomValue(getTotalCost);
+
+    return {
         cart,
+
+        subTotal,
+        discount,
+        totalCost,
+
         increaseItem,
         removeItem,
         decreaseItem,
         removeMultipleItemsAtom,
-    ];
+    };
 }
