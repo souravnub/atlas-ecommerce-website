@@ -17,9 +17,9 @@ const RadioButton = ({ name, label, value }) => {
     );
 };
 
-const RadioContainer = ({ title, options, ...rest }) => {
+const RadioContainer = ({ title, onChange, options, ...rest }) => {
     return (
-        <fieldset>
+        <fieldset onChange={(e) => onChange && onChange(e)}>
             {title && (
                 <legend className="font-semibold text-gray-700 block mb-4">
                     {title}

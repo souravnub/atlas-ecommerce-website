@@ -95,6 +95,10 @@ export const getTotalDiscountAtom = atom((get) => {
     return d;
 });
 
+export const shippingCostAtom = atom(0);
+
 export const getTotalCost = atom((get) => {
-    return get(getSubTotalAtom) - get(getTotalDiscountAtom);
+    return (
+        get(getSubTotalAtom) - get(getTotalDiscountAtom) + get(shippingCostAtom)
+    );
 });
